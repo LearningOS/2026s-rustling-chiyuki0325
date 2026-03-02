@@ -2,9 +2,6 @@
 //
 // Execute `rustlings hint iterators4` or use the `hint` watch subcommand for a
 // hint.
-
-// I AM NOT DONE
-
 pub fn factorial(num: u64) -> u64 {
     // Complete this function to return the factorial of num
     // Do not use:
@@ -15,6 +12,15 @@ pub fn factorial(num: u64) -> u64 {
     // For an extra challenge, don't use:
     // - recursion
     // Execute `rustlings hint iterators4` for hints.
+
+    // (1..num+1).into_iter().reduce(|acc, x| { acc * x }).unwrap_or(1)
+    // 凭着上辈子的 js 记忆写出来的
+
+    // (1..=num).fold(1, |acc, x| { acc * x })
+    // hint 提供的标准答案
+
+    (1..=num).product()
+    // ！？乘乘？！
 }
 
 #[cfg(test)]
