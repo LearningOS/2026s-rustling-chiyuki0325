@@ -5,7 +5,7 @@
 
 // I AM NOT DONE
 
-use std::sync::mpsc;
+use std::sync::mpsc;  // multi producer single consumer
 use std::sync::Arc;
 use std::thread;
 use std::time::Duration;
