@@ -2,8 +2,6 @@
 	single linked list merge
 	This problem requires you to merge two ordered singly linked lists into one ordered singly linked list
 */
-// I AM NOT DONE
-
 use std::fmt::{self, Display, Formatter};
 use std::ptr::NonNull;
 use std::vec::*;
@@ -69,14 +67,50 @@ impl<T> LinkedList<T> {
             },
         }
     }
-	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
+}
+
+impl LinkedList<i32> {
+	pub fn merge(list_a:LinkedList<i32>,list_b:LinkedList<i32>) -> Self
 	{
-		//TODO
-		Self {
-            length: 0,
-            start: None,
-            end: None,
+        let mut merged_list = LinkedList::<i32>::new();
+        let mut cursor_a = list_a.start;
+        let mut cursor_b = list_b.start;
+
+
+        // linkedlist traverse helpers
+        let get = |cursor: Option<NonNull<Node<i32>>>| -> Option<i32> {
+            cursor.map(|ptr| unsafe { (*ptr.as_ptr()).val })
+        };
+
+        let next = |cursor: Option<NonNull<Node<i32>>>| -> Option<NonNull<Node<i32>>> {
+            cursor.and_then(|ptr| unsafe { (*ptr.as_ptr()).next })
+        };
+
+        while cursor_a.is_some() && cursor_b.is_some() {
+            let val_a = get(cursor_a).unwrap();
+            let val_b = get(cursor_b).unwrap();
+            if val_a < val_b {
+                merged_list.add(val_a);
+                cursor_a = next(cursor_a);
+            } else {
+                merged_list.add(val_b);
+                cursor_b = next(cursor_b);
+            }
         }
+
+        while cursor_a.is_some() {
+            let val_a = get(cursor_a).unwrap();
+            merged_list.add(val_a);
+            cursor_a = next(cursor_a);
+        }
+
+        while cursor_b.is_some() {
+            let val_b = get(cursor_b).unwrap();
+            merged_list.add(val_b);
+            cursor_b = next(cursor_b);
+        }
+
+        merged_list
 	}
 }
 
