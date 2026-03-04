@@ -1,8 +1,7 @@
 /*
-	heap
-	This question requires you to implement a binary heap function
+    heap
+    This question requires you to implement a binary heap function
 */
-// I AM NOT DONE
 
 use std::cmp::Ord;
 use std::default::Default;
@@ -11,7 +10,6 @@ pub struct Heap<T>
 where
     T: Default,
 {
-    count: usize,
     items: Vec<T>,
     comparator: fn(&T, &T) -> bool,
 }
@@ -22,14 +20,13 @@ where
 {
     pub fn new(comparator: fn(&T, &T) -> bool) -> Self {
         Self {
-            count: 0,
-            items: vec![T::default()],
+            items: Vec::<T>::new(),
             comparator,
         }
     }
 
     pub fn len(&self) -> usize {
-        self.count
+        self.items.len()
     }
 
     pub fn is_empty(&self) -> bool {
@@ -37,28 +34,88 @@ where
     }
 
     pub fn add(&mut self, value: T) {
-        //TODO
+        self.items.push(value);
+        if self.items.len() > 1 {
+            self.float_up(self.items.len() - 1);
+        }
     }
 
     fn parent_idx(&self, idx: usize) -> usize {
-        idx / 2
+        (idx - 1) / 2
     }
 
     fn children_present(&self, idx: usize) -> bool {
-        self.left_child_idx(idx) <= self.count
+        self.left_child_idx(idx) <= self.len()
     }
 
     fn left_child_idx(&self, idx: usize) -> usize {
-        idx * 2
+        idx * 2 + 1
     }
 
     fn right_child_idx(&self, idx: usize) -> usize {
-        self.left_child_idx(idx) + 1
+        idx * 2 + 2
     }
 
-    fn smallest_child_idx(&self, idx: usize) -> usize {
-        //TODO
-		0
+    fn child_to_swap(&self, idx: usize) -> Option<usize> {
+        let l = self.left_child_idx(idx);
+        let r = self.right_child_idx(idx);
+
+        if l >= self.len() {
+            None
+        } else if r >= self.len() {
+            Some(l)
+        } else if (self.comparator)(&self.items[l], &self.items[r]) {
+            Some(l)
+        } else {
+            Some(r)
+        }
+    }
+
+    fn swap(&mut self, a: usize, b: usize) {
+        self.items.swap(a, b);
+    }
+
+    fn float_up(&mut self, idx: usize) {
+        let mut i = idx;
+        while i > 0 {
+            let pa = self.parent_idx(i);
+            if (self.comparator)(&self.items[pa], &self.items[i]) {
+                break;
+            }
+            self.swap(i, pa);
+            i = pa;
+        }
+    }
+    fn sink_down(&mut self, idx: usize) {
+        let mut i = idx;
+        loop {
+            if let Some(mc) = self.child_to_swap(i) {
+                if !(self.comparator)(&self.items[mc], &self.items[i]) {
+                    break;
+                }
+                self.swap(i, mc);
+                i = mc;
+            } else {
+                break;
+            }
+        }
+    }
+
+    pub fn pop(&mut self) -> Option<T> {
+        if self.items.is_empty() {
+            return None;
+        }
+
+        let last_idx = self.items.len() - 1;
+        self.swap(0, last_idx);
+
+        let res = self.items.pop();
+        
+        if !self.items.is_empty() {
+            self.sink_down(0);
+        }
+
+        res
     }
 }
 
@@ -84,8 +141,7 @@ where
     type Item = T;
 
     fn next(&mut self) -> Option<T> {
-        //TODO
-		None
+        self.pop()
     }
 }
 
